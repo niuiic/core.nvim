@@ -1,5 +1,6 @@
 local uv = vim.loop
 
+--- async job
 ---@param cmd string
 ---@param args Array<string>
 ---@param options {env?: string, cwd?: string, uid?: number, gid?: number, verbatim?: boolean, detached?: boolean, hide?: boolean}
