@@ -2,10 +2,10 @@ local uv = vim.loop
 
 ---@param cmd string
 ---@param args Array<string>
----@param options {env?:string, cwd?:string, uid?:number, gid?:number, verbatim?:boolean, detached?:boolean, hide?:boolean}
----@param on_exit fun(err:string, data:string)
----@param on_err fun(err:string, data:string)
----@return {terminate:fun(), running:fun():boolean} handle
+---@param options {env?: string, cwd?: string, uid?: number, gid?: number, verbatim?: boolean, detached?: boolean, hide?: boolean}
+---@param on_exit fun(err: string, data: string)
+---@param on_err fun(err: string, data: string)
+---@return {terminate: fun(), running: fun(): boolean} handle
 local spawn = function(cmd, args, options, on_exit, on_err)
 	local stderr = uv.new_pipe()
 	local stdout = uv.new_pipe()
