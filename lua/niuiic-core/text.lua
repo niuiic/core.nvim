@@ -19,8 +19,9 @@ local insert = function(content, pos)
 end
 
 --- get virtual selection
+---@param arr nil|boolean
 ---@return string
-local selection = function()
+local selection = function(arr)
 	local s_start = vim.fn.getpos("'<")
 	local s_end = vim.fn.getpos("'>")
 	local n_lines = math.abs(s_end[2] - s_start[2]) + 1
@@ -31,7 +32,11 @@ local selection = function()
 	else
 		lines[n_lines] = string.sub(lines[n_lines], 1, s_end[3])
 	end
-	return table.concat(lines, "\n")
+	if arr == true then
+		return lines
+	else
+		return table.concat(lines, "\n")
+	end
 end
 
 return {
