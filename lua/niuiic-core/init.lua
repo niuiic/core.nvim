@@ -5,6 +5,8 @@ local win = require("niuiic-core.win")
 local lua = require("niuiic-core.lua")
 local tree = require("niuiic-core.tree")
 
+require('niuiic-core.test')
+
 return {
 	file = file,
 	job = job,
