@@ -3,6 +3,7 @@ local common = require("niuiic-core.common")
 --- open float window
 ---@param bufnr number
 ---@param options {enter: boolean, relative: 'editor'|'win'|'cursor'|'mouse', win?: number, anchor?: 'NW'|'NE'|'SW'|'SE', width: number, height: number, bufpos?: Array<number>, row?: number, col?: number, style?: 'minimal', border: 'none'|'single'|'double'|'rounded'|'solid'|'shadow'|Array<string>, title?: string, title_pos?: 'left'|'center'|'right', noautocmd?: boolean}
+---@return {winnr: number, win_opening: fun(), close_win: fun()}
 local open_float = function(bufnr, options)
 	local cur_zindex = vim.api.nvim_win_get_config(0).zindex or 0
 	local winnr = vim.api.nvim_open_win(bufnr, options.enter, {
@@ -70,6 +71,7 @@ local single_float_wrapper = function()
 
 	---@param bufnr number
 	---@param options {enter: boolean, relative: 'editor'|'win'|'cursor'|'mouse', win?: number, anchor?: 'NW'|'NE'|'SW'|'SE', width: number, height: number, bufpos?: Array<number>, row?: number, col?: number, style?: 'minimal', border: 'none'|'single'|'double'|'rounded'|'solid'|'shadow'|Array<string>, title?: string, title_pos?: 'left'|'center'|'right', noautocmd?: boolean}
+	---@return {winnr: number, win_opening: fun(), close_win: fun()}
 	return function(bufnr, options)
 		if handle ~= nil and handle.win_opening() == true then
 			handle.close_win(true)
@@ -82,6 +84,7 @@ end
 --- open float window and insert text
 ---@param text string
 ---@param options {max_height?: number, max_width?: number, enter: boolean, relative: 'editor'|'win'|'cursor'|'mouse', win?: number, anchor?: 'NW'|'NE'|'SW'|'SE', bufpos?: Array<number>, row?: number, col?: number, style?: 'minimal', border: 'none'|'single'|'double'|'rounded'|'solid'|'shadow'|Array<string>, title?: string, title_pos?: 'left'|'center'|'right', noautocmd?: boolean}
+---@return {bufnr: number, winnr: number, win_opening: fun(), close_win: fun()}
 local open_float_with_text = function(text, options)
 	local screen_w = vim.opt.columns:get()
 	local screen_h = vim.opt.lines:get() - vim.opt.cmdheight:get()
@@ -122,9 +125,13 @@ local open_float_with_text = function(text, options)
 		title_pos = options.title_pos,
 		noautocmd = options.noautocmd,
 	})
-	handle.bufnr = bufnr
 	vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, text)
-	return handle
+	return {
+		bufnr = bufnr,
+		winnr = handle.winnr,
+		win_opening = handle.win_opening,
+		close_win = handle.close_win,
+	}
 end
 
 return {
