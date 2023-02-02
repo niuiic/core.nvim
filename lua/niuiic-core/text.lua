@@ -34,7 +34,29 @@ local selection = function()
 	return lines
 end
 
+--- get virtual selected area
+---@param bufnr number
+---@return {s_start: {row: number, col: number}, s_end: {row: number, col: number}}
+local selected_area = function(bufnr)
+	local s_start = vim.fn.getpos("'<")
+	local s_end = vim.fn.getpos("'>")
+	local fixed_col = function(row, col)
+		local line = vim.api.nvim_buf_get_lines(bufnr, row - 1, row, false)[1]
+		local length = vim.fn.strdisplaywidth(line)
+		if col > length then
+			return length
+		else
+			return col
+		end
+	end
+	return {
+		s_start = { row = s_start[2], col = fixed_col(s_start[2], s_start[3]) },
+		s_end = { row = s_end[2], col = fixed_col(s_end[2], s_end[3]) },
+	}
+end
+
 return {
 	insert = insert,
 	selection = selection,
+	selected_area = selected_area,
 }
