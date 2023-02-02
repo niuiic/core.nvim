@@ -45,6 +45,14 @@ table.insert(M, {
 })
 
 table.insert(M, {
+	"TextSelectArea",
+	function()
+		print(vim.inspect(text.selected_area(0)))
+	end,
+	{ range = 0 },
+})
+
+table.insert(M, {
 	"WinOpenFloat",
 	function()
 		win.open_float(0, {
