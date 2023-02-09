@@ -138,9 +138,33 @@ local open_float_with_text = function(text, options)
 	}
 end
 
+--- split window
+---@param bufnr number 0 for new buffer
+---@param options {direction:'v'|'h'; size: number; enter: boolean}
+local split_win = function(bufnr, options)
+	local curWin = vim.api.nvim_get_current_win()
+
+	if options.direction == "v" then
+		vim.cmd(options.size .. "vs")
+	else
+		vim.cmd(options.size .. "sp")
+	end
+
+	local winnr = vim.api.nvim_get_current_win()
+	bufnr = bufnr == 0 and vim.api.nvim_create_buf(true, true) or bufnr
+	vim.api.nvim_win_set_buf(winnr, bufnr)
+
+	if options.enter == false then
+		vim.api.nvim_set_current_win(curWin)
+	end
+
+	return { winnr = winnr, bufnr = bufnr }
+end
+
 return {
 	open_float = open_float,
 	proportional_size = proportional_size,
 	single_float_wrapper = single_float_wrapper,
 	open_float_with_text = open_float_with_text,
+	split_win = split_win,
 }
