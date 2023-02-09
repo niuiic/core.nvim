@@ -109,4 +109,15 @@ table.insert(M, {
 	end,
 })
 
+table.insert(M, {
+	"WinSplitWin",
+	function()
+		win.split_win(0, {
+			enter = false,
+			size = 20,
+			direction = "h",
+		})
+	end,
+})
+
 return M
