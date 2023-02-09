@@ -88,11 +88,13 @@ end
 local open_float_with_text = function(text, options)
 	local screen_w = vim.opt.columns:get()
 	local screen_h = vim.opt.lines:get() - vim.opt.cmdheight:get()
+
 	options.max_height = options.max_height or screen_h
 	options.max_width = options.max_width or screen_w
-	text = common.str_split(text, "\n")
+
 	local height = 0
 	local width = 0
+	text = common.str_split(text, "\n")
 	for _, line in ipairs(text) do
 		local str_len = vim.fn.strdisplaywidth(line)
 		if str_len <= options.max_width then
@@ -108,10 +110,11 @@ local open_float_with_text = function(text, options)
 	if height > options.max_height then
 		height = options.max_height
 	end
+
 	local bufnr = vim.api.nvim_create_buf(false, true)
 	local handle = open_float(bufnr, {
-		height = height or screen_h,
-		width = width or screen_w,
+		height = height ~= 0 and height or 1,
+		width = width ~= 0 and width or 1,
 		enter = options.enter,
 		relative = options.relative,
 		win = options.win,
@@ -126,6 +129,7 @@ local open_float_with_text = function(text, options)
 		noautocmd = options.noautocmd,
 	})
 	vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, text)
+
 	return {
 		bufnr = bufnr,
 		winnr = handle.winnr,
