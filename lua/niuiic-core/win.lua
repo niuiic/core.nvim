@@ -1,4 +1,4 @@
-local common = require("niuiic-core.common")
+local lua = require("niuiic-core.lua")
 
 --- open float window
 ---@param bufnr number
@@ -94,7 +94,7 @@ local open_float_with_text = function(text, options)
 
 	local height = 0
 	local width = 0
-	text = common.str_split(text, "\n")
+	text = lua.string.split(text, "\n")
 	for _, line in ipairs(text) do
 		local str_len = vim.fn.strdisplaywidth(line)
 		if str_len <= options.max_width then

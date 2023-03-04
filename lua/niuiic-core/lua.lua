@@ -11,5 +11,7 @@ local str_split = function(str, sep)
 end
 
 return {
-	str_split = str_split,
+	string = {
+		split = str_split,
+	},
 }
