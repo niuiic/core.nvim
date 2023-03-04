@@ -1,10 +1,10 @@
-local common = require("niuiic-core.common")
+local lua = require("niuiic-core.lua")
 
 --- insert text
 ---@param content string
 ---@param pos {row: number, col: number})
 local insert = function(content, pos)
-	local lines = common.str_split(content, "\n")
+	local lines = lua.string.split(content, "\n")
 	local cur_line = vim.api.nvim_buf_get_lines(0, pos.row - 1, pos.row, false)[1]
 	if #lines == 1 then
 		local new_line = cur_line:sub(0, pos.col + 1) .. lines[1] .. cur_line:sub(pos.col + 2)
