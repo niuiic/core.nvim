@@ -41,7 +41,30 @@ local root_path = function(pattern)
 	return fixed_path(pathBp)
 end
 
+--- check whether file contains the specific text
+---@param path string
+---@param text string
+---@return boolean
+local file_contains = function(path, text)
+	if file_or_dir_exists(path) then
+		local file = io.open(path, "r")
+		---@diagnostic disable-next-line: param-type-mismatch
+		io.input(file)
+		local content = io.read("*a")
+		if string.match(content, text) then
+			io.close(file)
+			return true
+		else
+			io.close(file)
+			return false
+		end
+	else
+		return false
+	end
+end
+
 return {
 	file_or_dir_exists = file_or_dir_exists,
 	root_path = root_path,
+	file_contains = file_contains,
 }
