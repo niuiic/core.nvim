@@ -16,25 +16,32 @@ local getPrevLevelPath = function(currentPath)
 	return string.sub(currentPath, 1, string.len(currentPath) - i)
 end
 
+local fixed_path = function(path)
+	local len = string.len(path)
+	if string.sub(path, len, len + 1) == "/" then
+		return string.sub(path, 1, len - 1)
+	end
+	return path
+end
+
 --- find root path of project
 ---@param pattern string
 ---@return string
-local find_root_path = function(pattern)
+local root_path = function(pattern)
 	pattern = pattern or ".git"
 	local path = vim.fn.getcwd(-1, -1) .. "/"
 	local pathBp = path
 	while path ~= "" do
-		local file, _ = io.open(path .. pattern)
-		if file ~= nil then
-			return path
+		if file_or_dir_exists(path .. pattern) then
+			return fixed_path(path)
 		else
 			path = getPrevLevelPath(path)
 		end
 	end
-	return pathBp
+	return fixed_path(pathBp)
 end
 
 return {
 	file_or_dir_exists = file_or_dir_exists,
-	find_root_path = find_root_path,
+	root_path = root_path,
 }
