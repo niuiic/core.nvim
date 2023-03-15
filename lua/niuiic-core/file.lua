@@ -25,7 +25,7 @@ local fixed_path = function(path)
 end
 
 --- find root path of project
----@param pattern string
+---@param pattern string | nil
 ---@return string
 local root_path = function(pattern)
 	pattern = pattern or ".git"
