@@ -60,6 +60,41 @@ local list_reduce = function(list, exec, initial_res)
 	return res
 end
 
+--- merge list, list2 will overwrite list1
+---@param list1 any[]
+---@param list2 any[]
+local list_merge = function(list1, list2)
+	local res = {}
+	for _, value in pairs(list2) do
+		table.insert(res, value)
+	end
+	for _, value in pairs(list1) do
+		if list_includes(list2, function(v)
+			return v == value
+		end) ~= true then
+			table.insert(res, value)
+		end
+	end
+	return res
+end
+
+--- deep clone table
+local table_clone
+---@param table {} | any[]
+---@return {} | any[]
+table_clone = function(table)
+	local res = {}
+	if type(table) == "table" then
+		for k, v in next, table, nil do
+			res[table_clone(k)] = table_clone(v)
+		end
+		setmetatable(res, table_clone(getmetatable(table)))
+	else
+		res = table
+	end
+	return res
+end
+
 return {
 	string = {
 		split = string_split,
@@ -69,5 +104,9 @@ return {
 		filter = list_filter,
 		includes = list_includes,
 		reduce = list_reduce,
+		merge = list_merge,
+	},
+	table = {
+		clone = table_clone,
 	},
 }
