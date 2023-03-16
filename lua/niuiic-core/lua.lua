@@ -80,8 +80,8 @@ end
 
 --- deep clone table
 local table_clone
----@param table {} | any[]
----@return {} | any[]
+---@param table any
+---@return any
 table_clone = function(table)
 	local res = {}
 	if type(table) == "table" then
