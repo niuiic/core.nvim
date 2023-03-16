@@ -32,7 +32,7 @@ local root_path = function(pattern)
 	local path = vim.fn.getcwd(-1, -1) .. "/"
 	local pathBp = path
 	while path ~= "" do
-		if file_or_dir_exists(path .. pattern) then
+		if file_or_dir_exists(path .. "/" .. pattern) then
 			return fixed_path(path)
 		else
 			path = getPrevLevelPath(path)
