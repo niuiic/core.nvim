@@ -140,7 +140,7 @@ end
 
 --- split window
 ---@param bufnr number 0 for new buffer
----@param options {direction:'v'|'h'; size: number; enter: boolean}
+---@param options {direction: 'v' | 'h'; size: number; enter: boolean}
 local split_win = function(bufnr, options)
 	local curWin = vim.api.nvim_get_current_win()
 
