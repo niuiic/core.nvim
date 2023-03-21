@@ -2,6 +2,7 @@ local M = {}
 local job = require("niuiic-core.job")
 local text = require("niuiic-core.text")
 local win = require("niuiic-core.win")
+local tree = require("niuiic-core.tree")
 
 table.insert(M, {
 	"Job",
@@ -117,6 +118,50 @@ table.insert(M, {
 			size = 20,
 			direction = "h",
 		})
+	end,
+})
+
+table.insert(M, {
+	"TreeView",
+	function()
+		---@type TreeNode[]
+		local nodes = {
+			{
+				label = "根",
+				action = {},
+				status = {
+					expanded = false,
+					is_leaf = false,
+				},
+				option = {},
+				level = 1,
+				children = {
+					{
+						label = "第一级",
+						action = {},
+						status = {
+							expanded = false,
+							is_leaf = false,
+						},
+						option = {},
+						level = 2,
+						children = {
+							{
+								label = "第二级",
+								action = {},
+								status = {
+									expanded = false,
+									is_leaf = true,
+								},
+								option = {},
+								level = 3,
+							},
+						},
+					},
+				},
+			},
+		}
+		tree.create_tree_view(nodes, { direction = "v", size = 40, enter = false, hide_line_number = true })
 	end,
 })
 
