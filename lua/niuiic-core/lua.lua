@@ -39,6 +39,7 @@ end
 --- whether list includes value
 ---@param list any[]
 ---@param is_target fun(v: any): boolean
+---@return boolean
 local list_includes = function(list, is_target)
 	for _, value in ipairs(list) do
 		if is_target(value) then
@@ -46,6 +47,19 @@ local list_includes = function(list, is_target)
 		end
 	end
 	return false
+end
+
+--- find item in list
+---@param list any[]
+---@param is_target fun(v: any): boolean
+---@return any | nil
+local list_find = function(list, is_target)
+	for _, value in ipairs(list) do
+		if is_target(value) then
+			return value
+		end
+	end
+	return nil
 end
 
 --- list reduce
@@ -105,6 +119,7 @@ return {
 		includes = list_includes,
 		reduce = list_reduce,
 		merge = list_merge,
+		find = list_find,
 	},
 	table = {
 		clone = table_clone,
