@@ -3,6 +3,7 @@ local job = require("niuiic-core.job")
 local text = require("niuiic-core.text")
 local win = require("niuiic-core.win")
 local lua = require("niuiic-core.lua")
+local tree = require("niuiic-core.tree")
 
 return {
 	file = file,
@@ -10,4 +11,5 @@ return {
 	text = text,
 	win = win,
 	lua = lua,
+	tree = tree,
 }
