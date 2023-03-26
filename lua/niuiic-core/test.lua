@@ -124,7 +124,7 @@ table.insert(M, {
 table.insert(M, {
 	"TreeView",
 	function()
-		---@type TreeNode[]
+		---@type Tree.Node[]
 		local nodes = {
 			{
 				label = "根",
@@ -133,7 +133,10 @@ table.insert(M, {
 					expanded = false,
 					is_leaf = false,
 				},
-				option = {},
+				option = {
+					icon = "",
+					hl = "Divider1",
+				},
 				level = 1,
 				children = {
 					{
@@ -143,7 +146,9 @@ table.insert(M, {
 							expanded = false,
 							is_leaf = false,
 						},
-						option = {},
+						option = {
+							icon = "",
+						},
 						level = 2,
 						children = {
 							{
@@ -156,12 +161,66 @@ table.insert(M, {
 								option = {},
 								level = 3,
 							},
+							{
+								label = "第二级2",
+								action = {},
+								status = {
+									expanded = false,
+									is_leaf = true,
+								},
+								option = {
+									icon = "",
+								},
+								level = 3,
+							},
+						},
+					},
+					{
+						label = "第一级2",
+						action = {},
+						status = {
+							expanded = false,
+							is_leaf = false,
+						},
+						option = {
+							hl = "Divider1",
+						},
+						level = 2,
+						children = {
+							{
+								label = "第二级",
+								action = {},
+								status = {
+									expanded = false,
+									is_leaf = true,
+								},
+								option = {
+									hl = "Divider2",
+								},
+								level = 3,
+							},
+							{
+								label = "第二级2",
+								action = {},
+								status = {
+									expanded = false,
+									is_leaf = true,
+								},
+								option = {
+									icon = "",
+									hl = "Divider2",
+									icon_hl = "Divider1",
+								},
+								level = 3,
+							},
 						},
 					},
 				},
 			},
 		}
-		tree.create_tree_view(nodes, { direction = "v", size = 40, enter = false, hide_line_number = true })
+		local handle =
+			tree.create_tree_view(nodes, { direction = "v", size = 40, enter = false, hide_line_number = true })
+		vim.api.nvim_buf_set_option(handle.bufnr, "filetype", "tree-view")
 	end,
 })
 
