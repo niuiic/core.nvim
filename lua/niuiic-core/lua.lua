@@ -36,6 +36,25 @@ local list_filter = function(list, filter)
 	return new_list
 end
 
+--- sort list
+---@param list any[]
+---@param to_swap fun(prev: any, cur: any): boolean
+---@return any[]
+local list_sort = function(list, to_swap)
+	local new_list = {}
+	for _, value in ipairs(list) do
+		for i, v in ipairs(new_list) do
+			if to_swap(v, value) then
+				table.insert(new_list, i, value)
+				goto continue
+			end
+		end
+		table.insert(new_list, value)
+		::continue::
+	end
+	return new_list
+end
+
 --- whether list includes value
 ---@param list any[]
 ---@param is_target fun(v: any): boolean
@@ -109,6 +128,24 @@ table_clone = function(table)
 	return res
 end
 
+---@class Lua.Node
+---@field children Lua.Node[] | nil
+
+local tree_walk
+---@param nodes Lua.Node[]
+---@param cb fun(node: Lua.Node, parent_node: Lua.Node | nil)
+---@param parent_node Lua.Node
+tree_walk = function(nodes, cb, parent_node)
+	for _, node in ipairs(nodes) do
+		cb(node, parent_node)
+		if node.children then
+			for _, child in pairs(node.children) do
+				tree_walk(child, cb, node)
+			end
+		end
+	end
+end
+
 return {
 	string = {
 		split = string_split,
@@ -120,8 +157,12 @@ return {
 		reduce = list_reduce,
 		merge = list_merge,
 		find = list_find,
+		sort = list_sort,
 	},
 	table = {
 		clone = table_clone,
+	},
+	tree = {
+		walk = tree_walk,
 	},
 }
