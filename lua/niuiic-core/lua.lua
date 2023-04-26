@@ -83,14 +83,23 @@ end
 
 --- list reduce
 ---@param list any[]
----@param exec fun(prev_res: any, cur_item: any, list: any[]): any
+---@param cb fun(prev_res: any, cur_item: any, list: any[]): any
 ---@param initial_res any
-local list_reduce = function(list, exec, initial_res)
+local list_reduce = function(list, cb, initial_res)
 	local res = initial_res
 	for _, value in ipairs(list) do
-		res = exec(res, value, list)
+		res = cb(res, value, list)
 	end
 	return res
+end
+
+--- list for each
+---@param list any[]
+---@param cb fun(v: any, i: number): nil
+local list_each = function(list, cb)
+	for i, v in ipairs(list) do
+		cb(v, i)
+	end
 end
 
 --- merge list, list2 will overwrite list1
@@ -113,8 +122,8 @@ end
 
 --- deep clone table
 local table_clone
----@param table any
----@return any
+---@param table Object
+---@return Object
 table_clone = function(table)
 	local res = {}
 	if type(table) == "table" then
@@ -128,9 +137,55 @@ table_clone = function(table)
 	return res
 end
 
+--- table for each
+---@param table Object
+---@param cb fun(k: string, v: any): nil
+local table_each = function(table, cb)
+	for k, v in pairs(table) do
+		cb(k, v)
+	end
+end
+
+--- table map
+---@param table Object
+---@param map fun(v: any): any
+---@return Object
+local table_map = function(table, map)
+	local res = {}
+	for k, v in pairs(table) do
+		res[k] = map(v)
+	end
+	return res
+end
+
+--- table reduce
+---@param table Object
+---@param cb fun(prev_res: any, cur_item: {k: string, v: any}, table: any): any
+---@param initial_res any
+---@return any
+local table_reduce = function(table, cb, initial_res)
+	local res = initial_res
+	for k, v in pairs(table) do
+		res = cb(res, { k = k, v = v }, table)
+	end
+	return res
+end
+
+--- table keys
+---@param t Object
+---@return string[]
+local table_keys = function(t)
+	local keys = {}
+	for key, _ in pairs(t) do
+		table.insert(keys, key)
+	end
+	return keys
+end
+
 ---@class Lua.Node
 ---@field children Lua.Node[] | nil
 
+--- table walk
 local tree_walk
 ---@param nodes Lua.Node[]
 ---@param cb fun(node: Lua.Node, parent_node: Lua.Node | nil)
@@ -158,9 +213,14 @@ return {
 		merge = list_merge,
 		find = list_find,
 		sort = list_sort,
+		each = list_each,
 	},
 	table = {
 		clone = table_clone,
+		each = table_each,
+		map = table_map,
+		reduce = table_reduce,
+		keys = table_keys,
 	},
 	tree = {
 		walk = tree_walk,
