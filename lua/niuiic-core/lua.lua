@@ -12,24 +12,24 @@ end
 
 --- map list
 ---@param list any[]
----@param map fun(v: any): any
+---@param map fun(v: any, i: number): any
 ---@return any[]
 local list_map = function(list, map)
 	local new_list = {}
-	for _, value in ipairs(list) do
-		table.insert(new_list, map(value))
+	for index, value in ipairs(list) do
+		table.insert(new_list, map(value, index))
 	end
 	return new_list
 end
 
 --- filter list
 ---@param list any[]
----@param filter fun(v: any): boolean
+---@param filter fun(v: any, i: number): boolean
 ---@return any[]
 local list_filter = function(list, filter)
 	local new_list = {}
-	for _, value in ipairs(list) do
-		if filter(value) then
+	for index, value in ipairs(list) do
+		if filter(value, index) then
 			table.insert(new_list, value)
 		end
 	end
@@ -57,11 +57,11 @@ end
 
 --- whether list includes value
 ---@param list any[]
----@param is_target fun(v: any): boolean
+---@param is_target fun(v: any, i: number): boolean
 ---@return boolean
 local list_includes = function(list, is_target)
-	for _, value in ipairs(list) do
-		if is_target(value) then
+	for index, value in ipairs(list) do
+		if is_target(value, index) then
 			return true
 		end
 	end
@@ -70,11 +70,11 @@ end
 
 --- find item in list
 ---@param list any[]
----@param is_target fun(v: any): boolean
+---@param is_target fun(v: any, i:number): boolean
 ---@return any | nil
 local list_find = function(list, is_target)
-	for _, value in ipairs(list) do
-		if is_target(value) then
+	for index, value in ipairs(list) do
+		if is_target(value, index) then
 			return value
 		end
 	end
