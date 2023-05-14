@@ -2,7 +2,7 @@ local lua = require("niuiic-core.lua")
 
 --- open float window
 ---@param bufnr number
----@param options {enter: boolean, relative: 'editor'|'win'|'cursor'|'mouse', win?: number, anchor?: 'NW'|'NE'|'SW'|'SE', width: number, height: number, bufpos?: Array<number>, row?: number, col?: number, style?: 'minimal', border: 'none'|'single'|'double'|'rounded'|'solid'|'shadow'|Array<string>, title?: string, title_pos?: 'left'|'center'|'right', noautocmd?: boolean}
+---@param options {enter: boolean, relative: 'editor'|'win'|'cursor'|'mouse', win?: number, anchor?: 'NW'|'NE'|'SW'|'SE', width: number, height: number, bufpos?: number[], row?: number, col?: number, style?: 'minimal', border: 'none'|'single'|'double'|'rounded'|'solid'|'shadow'|string[], title?: string, title_pos?: 'left'|'center'|'right', noautocmd?: boolean}
 ---@return {winnr: number, win_opening: fun(), close_win: fun()}
 local open_float = function(bufnr, options)
 	local cur_zindex = vim.api.nvim_win_get_config(0).zindex or 0
@@ -70,7 +70,7 @@ local single_float_wrapper = function()
 	local handle
 
 	---@param bufnr number
-	---@param options {enter: boolean, relative: 'editor'|'win'|'cursor'|'mouse', win?: number, anchor?: 'NW'|'NE'|'SW'|'SE', width: number, height: number, bufpos?: Array<number>, row?: number, col?: number, style?: 'minimal', border: 'none'|'single'|'double'|'rounded'|'solid'|'shadow'|Array<string>, title?: string, title_pos?: 'left'|'center'|'right', noautocmd?: boolean}
+	---@param options {enter: boolean, relative: 'editor'|'win'|'cursor'|'mouse', win?: number, anchor?: 'NW'|'NE'|'SW'|'SE', width: number, height: number, bufpos?: number[], row?: number, col?: number, style?: 'minimal', border: 'none'|'single'|'double'|'rounded'|'solid'|'shadow'|string[], title?: string, title_pos?: 'left'|'center'|'right', noautocmd?: boolean}
 	---@return {winnr: number, win_opening: fun(), close_win: fun()}
 	return function(bufnr, options)
 		if handle ~= nil and handle.win_opening() == true then
@@ -83,7 +83,7 @@ end
 
 --- open float window and insert text
 ---@param text string
----@param options {max_height?: number, max_width?: number, enter: boolean, relative: 'editor'|'win'|'cursor'|'mouse', win?: number, anchor?: 'NW'|'NE'|'SW'|'SE', bufpos?: Array<number>, row?: number, col?: number, style?: 'minimal', border: 'none'|'single'|'double'|'rounded'|'solid'|'shadow'|Array<string>, title?: string, title_pos?: 'left'|'center'|'right', noautocmd?: boolean}
+---@param options {max_height?: number, max_width?: number, enter: boolean, relative: 'editor'|'win'|'cursor'|'mouse', win?: number, anchor?: 'NW'|'NE'|'SW'|'SE', bufpos?: number[], row?: number, col?: number, style?: 'minimal', border: 'none'|'single'|'double'|'rounded'|'solid'|'shadow'|string[], title?: string, title_pos?: 'left'|'center'|'right', noautocmd?: boolean}
 ---@return {bufnr: number, winnr: number, win_opening: fun(), close_win: fun()}
 local open_float_with_text = function(text, options)
 	local screen_w = vim.opt.columns:get()
@@ -94,8 +94,8 @@ local open_float_with_text = function(text, options)
 
 	local height = 0
 	local width = 0
-	text = lua.string.split(text, "\n")
-	for _, line in ipairs(text) do
+	local lines = lua.string.split(text, "\n")
+	for _, line in ipairs(lines) do
 		local str_len = vim.fn.strdisplaywidth(line)
 		if str_len <= options.max_width then
 			height = height + 1
@@ -128,7 +128,7 @@ local open_float_with_text = function(text, options)
 		title_pos = options.title_pos,
 		noautocmd = options.noautocmd,
 	})
-	vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, text)
+	vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
 
 	return {
 		bufnr = bufnr,

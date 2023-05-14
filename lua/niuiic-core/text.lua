@@ -19,7 +19,7 @@ local insert = function(content, pos)
 end
 
 --- get virtual selection
----@return Array<string>
+---@return string[]
 local selection = function()
 	local s_start = vim.fn.getpos("'<")
 	local s_end = vim.fn.getpos("'>")

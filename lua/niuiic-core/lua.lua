@@ -1,7 +1,7 @@
 --- split string
 ---@param str string
 ---@param sep string
----@return Array<string>
+---@return string[]
 local string_split = function(str, sep)
 	local res = {}
 	for s in string.gmatch(str, "[^" .. sep .. "]+") do
@@ -122,8 +122,8 @@ end
 
 --- deep clone table
 local table_clone
----@param table Object
----@return Object
+---@param table object
+---@return object
 table_clone = function(table)
 	local res = {}
 	if type(table) == "table" then
@@ -138,7 +138,7 @@ table_clone = function(table)
 end
 
 --- table for each
----@param table Object
+---@param table object
 ---@param cb fun(k: string, v: any): nil
 local table_each = function(table, cb)
 	for k, v in pairs(table) do
@@ -147,9 +147,9 @@ local table_each = function(table, cb)
 end
 
 --- table map
----@param table Object
+---@param table object
 ---@param map fun(v: any): any
----@return Object
+---@return object
 local table_map = function(table, map)
 	local res = {}
 	for k, v in pairs(table) do
@@ -159,7 +159,7 @@ local table_map = function(table, map)
 end
 
 --- table reduce
----@param table Object
+---@param table object
 ---@param cb fun(prev_res: any, cur_item: {k: string, v: any}, table: any): any
 ---@param initial_res any
 ---@return any
@@ -172,7 +172,7 @@ local table_reduce = function(table, cb, initial_res)
 end
 
 --- table keys
----@param t Object
+---@param t object
 ---@return string[]
 local table_keys = function(t)
 	local keys = {}
