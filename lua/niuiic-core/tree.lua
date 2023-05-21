@@ -181,7 +181,7 @@ local register_actions = function(nodes, bufnr, tree_view)
 end
 
 ---@param nodes Tree.Node[]
----@param options {direction: 'v' | 'h'; size: number; enter: boolean}
+---@param options {direction: 'vl'|'vr'|'ht'|'hb'; size: number; enter: boolean}
 ---@return {winnr: number, bufnr: number, tree_view: {lines : Tree.Line[]}}
 local create_tree_view = function(nodes, options)
 	-- new window

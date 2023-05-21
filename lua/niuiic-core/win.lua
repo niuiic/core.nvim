@@ -140,14 +140,18 @@ end
 
 --- split window
 ---@param bufnr number 0 for new buffer
----@param options {direction: 'v' | 'h'; size: number; enter: boolean}
+---@param options {direction: 'vl'|'vr'|'ht'|'hb'; size: number; enter: boolean}
 local split_win = function(bufnr, options)
 	local curWin = vim.api.nvim_get_current_win()
 
-	if options.direction == "v" then
+	if options.direction == "vl" then
+		vim.cmd("topleft " .. options.size .. "vs")
+	elseif options.direction == "vr" then
 		vim.cmd(options.size .. "vs")
-	else
+	elseif options.direction == "hb" then
 		vim.cmd(options.size .. "sp")
+	else
+		vim.cmd("top " .. options.size .. "sp")
 	end
 
 	local winnr = vim.api.nvim_get_current_win()
