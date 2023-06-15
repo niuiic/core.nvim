@@ -107,15 +107,15 @@ end
 ---@param list2 any[]
 local list_merge = function(list1, list2)
 	local res = {}
-	for _, value in pairs(list2) do
-		table.insert(res, value)
-	end
 	for _, value in pairs(list1) do
 		if list_includes(list2, function(v)
 			return v == value
 		end) ~= true then
 			table.insert(res, value)
 		end
+	end
+	for _, value in pairs(list2) do
+		table.insert(res, value)
 	end
 	return res
 end
