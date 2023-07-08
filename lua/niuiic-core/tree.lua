@@ -63,21 +63,48 @@ end
 ---@param cur_line number
 local draw_line = function(node, bufnr, cur_line)
 	vim.api.nvim_buf_set_lines(bufnr, cur_line - 1, cur_line, false, { node_text(node) })
+
+	local indent_end_col = (node.level - 1) * 2
+
+	-- calc expand icon pos
+	local expand_icon_start_col
+	local expand_icon_end_col
+	if not is_leaf(node) then
+		expand_icon_start_col = indent_end_col
+		expand_icon_end_col = expand_icon_start_col + 1
+	end
+
+	-- calc icon pos
+	local icon_start_col
+	local icon_end_col
+	if node.option.icon ~= nil then
+		icon_start_col = indent_end_col + 2
+		icon_end_col = icon_start_col + string.len(node.option.icon)
+	end
+
+	-- calc label pos
+	local label_start_col
+	if node.option.icon ~= nil then
+		label_start_col = icon_end_col + 1
+	else
+		label_start_col = indent_end_col + 4
+	end
+
 	if node.option.hl then
-		vim.api.nvim_buf_add_highlight(bufnr, -1, node.option.hl, cur_line - 1, node.level * 2 + 1, -1)
+		vim.api.nvim_buf_add_highlight(bufnr, -1, node.option.hl, cur_line - 1, label_start_col, -1)
 	end
 	if not is_leaf(node) then
-		vim.api.nvim_buf_add_highlight(bufnr, -1, "TreeViewPrimary", cur_line - 1, node.level * 2, node.level * 2 + 1)
-	end
-	if node.option.icon and node.option.icon_hl then
 		vim.api.nvim_buf_add_highlight(
 			bufnr,
 			-1,
-			node.option.icon_hl,
+			"TreeViewPrimary",
 			cur_line - 1,
-			node.level * 2 + 2,
-			node.level * 2 + 2 + string.len(node.option.icon)
+			expand_icon_start_col,
+			expand_icon_end_col
 		)
+	end
+	if node.option.icon and node.option.icon_hl then
+		vim.api.nvim_buf_add_highlight(bufnr, -1, node.option.icon_hl, cur_line - 1, icon_start_col, icon_end_col)
 	end
 end
 
