@@ -9,6 +9,7 @@ local uv = vim.loop
 ---@param on_output fun(err: string, data: string) | nil
 ---@return {terminate: fun(), running: fun(): boolean} handle
 local spawn = function(cmd, args, options, on_exit, on_err, on_output)
+	local stdin = uv.new_pipe()
 	local stderr = uv.new_pipe()
 	local stdout = uv.new_pipe()
 	local job_running = true
@@ -38,7 +39,7 @@ local spawn = function(cmd, args, options, on_exit, on_err, on_output)
 		cmd,
 		{
 			args = args,
-			stdio = { nil, stdout, stderr },
+			stdio = { stdin, stdout, stderr },
 			env = options.env,
 			cwd = options.cwd,
 			uid = options.uid,
@@ -59,7 +60,7 @@ local spawn = function(cmd, args, options, on_exit, on_err, on_output)
 		uv.read_start(
 			stdout,
 			vim.schedule_wrap(function(err, data)
-				if on_output then
+				if data and on_output then
 					on_output(err, data)
 				end
 			end)
@@ -69,7 +70,7 @@ local spawn = function(cmd, args, options, on_exit, on_err, on_output)
 		uv.read_start(
 			stderr,
 			vim.schedule_wrap(function(err, data)
-				if on_err then
+				if data and on_err then
 					on_err(err, data)
 				end
 			end)
@@ -81,6 +82,7 @@ local spawn = function(cmd, args, options, on_exit, on_err, on_output)
 		running = function()
 			return job_running
 		end,
+		stdin = stdin,
 	}
 end
 
