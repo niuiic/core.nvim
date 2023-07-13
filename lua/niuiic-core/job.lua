@@ -4,10 +4,11 @@ local uv = vim.loop
 ---@param cmd string
 ---@param args string[]
 ---@param options {env?: table<string, any>, cwd?: string, uid?: number, gid?: number, verbatim?: boolean, detached?: boolean, hide?: boolean}
----@param on_exit fun(err: string, data: string)
----@param on_err fun(err: string, data: string)
+---@param on_exit fun(code: integer, signal: integer) | nil
+---@param on_err fun(err: string, data: string) | nil
+---@param on_output fun(err: string, data: string) | nil
 ---@return {terminate: fun(), running: fun(): boolean} handle
-local spawn = function(cmd, args, options, on_exit, on_err)
+local spawn = function(cmd, args, options, on_exit, on_err, on_output)
 	local stderr = uv.new_pipe()
 	local stdout = uv.new_pipe()
 	local job_running = true
@@ -27,32 +28,39 @@ local spawn = function(cmd, args, options, on_exit, on_err)
 		job_running = false
 	end
 	local terminate = function()
-		job_running = false
 		if handle then
 			uv.process_kill(handle, 0)
 		end
 		clean()
 	end
 
-	handle = uv.spawn(cmd, {
-		args = args,
-		stdio = { nil, stdout, stderr },
-		env = options.env,
-		cwd = options.cwd,
-		uid = options.uid,
-		gid = options.gid,
-		verbatim = options.verbatim,
-		detached = options.detached,
-		hide = options.hide,
-	}, clean)
+	handle = uv.spawn(
+		cmd,
+		{
+			args = args,
+			stdio = { nil, stdout, stderr },
+			env = options.env,
+			cwd = options.cwd,
+			uid = options.uid,
+			gid = options.gid,
+			verbatim = options.verbatim,
+			detached = options.detached,
+			hide = options.hide,
+		},
+		vim.schedule_wrap(function(code, signal)
+			clean()
+			if on_exit then
+				on_exit(code, signal)
+			end
+		end)
+	)
 
 	if stdout then
 		uv.read_start(
 			stdout,
 			vim.schedule_wrap(function(err, data)
-				if job_running then
-					job_running = false
-					on_exit(err, data)
+				if on_output then
+					on_output(err, data)
 				end
 			end)
 		)
@@ -61,8 +69,7 @@ local spawn = function(cmd, args, options, on_exit, on_err)
 		uv.read_start(
 			stderr,
 			vim.schedule_wrap(function(err, data)
-				if job_running then
-					job_running = false
+				if on_err then
 					on_err(err, data)
 				end
 			end)
