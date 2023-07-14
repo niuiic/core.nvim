@@ -1,10 +1,10 @@
-local file = require("niuiic-core.file")
-local job = require("niuiic-core.job")
-local text = require("niuiic-core.text")
-local win = require("niuiic-core.win")
-local lua = require("niuiic-core.lua")
-local tree = require("niuiic-core.tree")
-local timer = require("niuiic-core.timer")
+local file = require("core.file")
+local job = require("core.job")
+local text = require("core.text")
+local win = require("core.win")
+local lua = require("core.lua")
+local tree = require("core.tree")
+local timer = require("core.timer")
 
 return {
 	file = file,

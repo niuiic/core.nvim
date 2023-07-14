@@ -26,8 +26,8 @@
 ---@field line number
 ---@field node Tree.Node
 
-local win = require("niuiic-core.win")
-local lua = require("niuiic-core.lua")
+local win = require("core.win")
+local lua = require("core.lua")
 
 local expanded_icon = ""
 local unexpanded_icon = ""

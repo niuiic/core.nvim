@@ -1,4 +1,4 @@
-local lua = require("niuiic-core.lua")
+local lua = require("core.lua")
 
 --- insert text
 ---@param content string
