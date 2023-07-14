@@ -1,3 +1,6 @@
+local lua = require("core.lua")
+local uv = vim.loop
+
 --- check whether file or directory exist
 ---@param path string
 local file_or_dir_exists = function(path)
@@ -10,7 +13,7 @@ local file_or_dir_exists = function(path)
 	end
 end
 
-local getPrevLevelPath = function(currentPath)
+local get_prev_level_path = function(currentPath)
 	local tmp = string.reverse(currentPath)
 	local _, i = string.find(tmp, "/")
 	return string.sub(currentPath, 1, string.len(currentPath) - i)
@@ -35,7 +38,7 @@ local root_path = function(pattern)
 		if file_or_dir_exists(path .. "/" .. pattern) then
 			return fixed_path(path)
 		else
-			path = getPrevLevelPath(path)
+			path = get_prev_level_path(path)
 		end
 	end
 	return fixed_path(pathBp)
@@ -63,8 +66,25 @@ local file_contains = function(path, text)
 	end
 end
 
+--- create directory, like `mkdir -p`
+---@param dir_path string
+local mkdir = function(dir_path)
+	local dir_list = lua.string.split(dir_path, "/")
+	local cur_dir = ""
+	if dir_path[1] == "/" then
+		cur_dir = "/"
+	end
+	for _, dir in ipairs(dir_list) do
+		cur_dir = cur_dir .. dir .. "/"
+		if not file_or_dir_exists(cur_dir) then
+			uv.fs_mkdir(cur_dir, 511)
+		end
+	end
+end
+
 return {
 	file_or_dir_exists = file_or_dir_exists,
 	root_path = root_path,
 	file_contains = file_contains,
+	mkdir = mkdir,
 }
