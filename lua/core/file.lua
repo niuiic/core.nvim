@@ -82,9 +82,31 @@ local mkdir = function(dir_path)
 	end
 end
 
+--- get file name from file path
+--- test.lua -> name is "test"
+---@param file_path string
+local name = function(file_path)
+	return string.match(file_path, "([^/^%.]+)[^/]*$")
+end
+
+--- get file extention from file path
+---@param file_path string
+local extension = function(file_path)
+	return string.match(file_path, "%.([^%.]+)$")
+end
+
+--- get dir path from file path
+---@param file_path string
+local dir = function(file_path)
+	return string.match(file_path, "(.+)/[^/]+")
+end
+
 return {
 	file_or_dir_exists = file_or_dir_exists,
 	root_path = root_path,
 	file_contains = file_contains,
 	mkdir = mkdir,
+	name = name,
+	extension = extension,
+	dir = dir,
 }
