@@ -1,30 +1,30 @@
----@class Tree.Node
+---@class core.Tree.Node
 ---@field label string
----@field action Tree.NodeAction
----@field status Tree.NodeStatus
----@field option Tree.NodeOption
+---@field action core.Tree.NodeAction
+---@field status core.Tree.NodeStatus
+---@field option core.Tree.NodeOption
 ---@field level number
----@field children Tree.Node[] | nil
+---@field children core.Tree.Node[] | nil
 ---@field extend any
 
----@class Tree.NodeAction
----@field on_click fun(node: Tree.Node) | nil
----@field on_expand fun(node: Tree.Node) | nil
----@field on_fold fun(node: Tree.Node) | nil
+---@class core.Tree.NodeAction
+---@field on_click fun(node: core.Tree.Node) | nil
+---@field on_expand fun(node: core.Tree.Node) | nil
+---@field on_fold fun(node: core.Tree.Node) | nil
 
----@class Tree.NodeStatus
+---@class core.Tree.NodeStatus
 ---@field expanded boolean
 
----@class Tree.NodeOption
+---@class core.Tree.NodeOption
 ---@field hl string | nil
 ---@field icon string | nil
 ---@field icon_hl string | nil
 ---@field disable boolean | nil
 ---@field hide boolean | nil
 
----@class Tree.Line
+---@class core.Tree.Line
 ---@field line number
----@field node Tree.Node
+---@field node core.Tree.Node
 
 local win = require("core.win")
 local lua = require("core.lua")
@@ -34,13 +34,13 @@ local unexpanded_icon = ""
 
 vim.api.nvim_set_hl(0, "TreeViewPrimary", { fg = "#6D7E96" })
 
----@param node Tree.Node
+---@param node core.Tree.Node
 ---@return boolean
 local is_leaf = function(node)
 	return not node.children or table.maxn(node.children) == 0
 end
 
----@param node Tree.Node
+---@param node core.Tree.Node
 ---@return string
 local node_text = function(node)
 	local indent = ""
@@ -58,7 +58,7 @@ local node_text = function(node)
 	end
 end
 
----@param node Tree.Node
+---@param node core.Tree.Node
 ---@param bufnr number
 ---@param cur_line number
 local draw_line = function(node, bufnr, cur_line)
@@ -111,9 +111,9 @@ end
 local draw_tree_wrapper = function()
 	local draw_tree
 	local cur_line = 1
-	---@param nodes Tree.Node[]
+	---@param nodes core.Tree.Node[]
 	---@param bufnr number
-	---@param tree_view {lines: Tree.Line[]}
+	---@param tree_view {lines: core.Tree.Line[]}
 	draw_tree = function(nodes, bufnr, tree_view)
 		for _, node in ipairs(nodes) do
 			if not node.option.hide then
@@ -132,20 +132,24 @@ local draw_tree_wrapper = function()
 	return draw_tree
 end
 
----@param nodes Tree.Node[]
+---@param nodes core.Tree.Node[]
 ---@param bufnr number
----@param tree_view {lines: Tree.Line[]}
+---@param tree_view {lines: core.Tree.Line[]}
 local refresh_tree_view = function(nodes, bufnr, tree_view)
 	tree_view.lines = {}
-	vim.api.nvim_buf_set_option(bufnr, "modifiable", true)
+	vim.api.nvim_set_option_value("modifiable", true, {
+		buf = bufnr,
+	})
 	vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, {})
 	draw_tree_wrapper()(nodes, bufnr, tree_view)
-	vim.api.nvim_buf_set_option(bufnr, "modifiable", false)
+	vim.api.nvim_set_option_value("modifiable", false, {
+		buf = bufnr,
+	})
 end
 
 ---@param bufnr number
----@param tree_view {lines: Tree.Line[]}
----@param nodes Tree.Node[]
+---@param tree_view {lines: core.Tree.Line[]}
+---@param nodes core.Tree.Node[]
 local register_actions = function(nodes, bufnr, tree_view)
 	vim.keymap.set("n", "l", function()
 		local pos = vim.api.nvim_win_get_cursor(0)
@@ -207,28 +211,46 @@ local register_actions = function(nodes, bufnr, tree_view)
 	})
 end
 
----@param nodes Tree.Node[]
+---@param nodes core.Tree.Node[]
 ---@param options {direction: 'vl'|'vr'|'ht'|'hb'; size: number; enter: boolean}
----@return {winnr: number, bufnr: number, tree_view: {lines : Tree.Line[]}}
+---@return {winnr: number, bufnr: number, tree_view: {lines : core.Tree.Line[]}}
 local create_tree_view = function(nodes, options)
 	-- new window
 	local handle = win.split_win(0, options)
-	vim.api.nvim_win_set_option(handle.winnr, "number", false)
-	vim.api.nvim_win_set_option(handle.winnr, "relativenumber", false)
-	vim.api.nvim_win_set_option(handle.winnr, "winfixwidth", true)
-	vim.api.nvim_win_set_option(handle.winnr, "list", false)
-	vim.api.nvim_win_set_option(handle.winnr, "wrap", true)
-	vim.api.nvim_win_set_option(handle.winnr, "linebreak", true)
-	vim.api.nvim_win_set_option(handle.winnr, "breakindent", true)
-	vim.api.nvim_win_set_option(handle.winnr, "showbreak", "      ")
+	vim.api.nvim_set_option_value("number", false, {
+		win = handle.winnr,
+	})
+	vim.api.nvim_set_option_value("relativenumber", false, {
+		win = handle.winnr,
+	})
+	vim.api.nvim_set_option_value("winfixwidth", true, {
+		win = handle.winnr,
+	})
+	vim.api.nvim_set_option_value("list", false, {
+		win = handle.winnr,
+	})
+	vim.api.nvim_set_option_value("wrap", true, {
+		win = handle.winnr,
+	})
+	vim.api.nvim_set_option_value("linebreak", true, {
+		win = handle.winnr,
+	})
+	vim.api.nvim_set_option_value("breakindent", true, {
+		win = handle.winnr,
+	})
+	vim.api.nvim_set_option_value("showbreak", "      ", {
+		win = handle.winnr,
+	})
 
 	-- draw tree view
-	---@type {lines: Tree.Line[]}
+	---@type {lines: core.Tree.Line[]}
 	local tree_view = {
 		lines = {},
 	}
 	draw_tree_wrapper()(nodes, handle.bufnr, tree_view)
-	vim.api.nvim_buf_set_option(handle.bufnr, "modifiable", false)
+	vim.api.nvim_set_option_value("modifiable", false, {
+		buf = handle.bufnr,
+	})
 	register_actions(nodes, handle.bufnr, tree_view)
 
 	return {
