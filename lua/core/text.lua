@@ -18,20 +18,30 @@ local insert = function(content, pos)
 	end
 end
 
---- get virtual selection
----@return string[]
+--- get virtual selection or expr under the cursor
+---@return string
 local selection = function()
-	local s_start = vim.fn.getpos("'<")
-	local s_end = vim.fn.getpos("'>")
-	local n_lines = math.abs(s_end[2] - s_start[2]) + 1
-	local lines = vim.api.nvim_buf_get_lines(0, s_start[2] - 1, s_end[2], false)
-	lines[1] = string.sub(lines[1], s_start[3], -1)
-	if n_lines == 1 then
-		lines[n_lines] = string.sub(lines[n_lines], 1, s_end[3] - s_start[3] + 1)
+	local mode = vim.fn.mode()
+	if mode == "v" then
+		local start_pos = vim.fn.getpos("v")
+		local finish_pos = vim.fn.getpos(".")
+		local start_line, start_col = start_pos[2], start_pos[3]
+		local finish_line, finish_col = finish_pos[2], finish_pos[3]
+
+		if start_line > finish_line or (start_line == finish_line and start_col > finish_col) then
+			start_line, start_col, finish_line, finish_col = finish_line, finish_col, start_line, start_col
+		end
+
+		local lines = vim.fn.getline(start_line, finish_line)
+		if #lines == 0 then
+			return ""
+		end
+		lines[#lines] = string.sub(lines[#lines], 1, finish_col)
+		lines[1] = string.sub(lines[1], start_col)
+		return table.concat(lines, "\n")
 	else
-		lines[n_lines] = string.sub(lines[n_lines], 1, s_end[3])
+		return vim.fn.expand("<cexpr>")
 	end
-	return lines
 end
 
 --- get virtual selected area
