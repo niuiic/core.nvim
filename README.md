@@ -1,3 +1,3 @@
-# niuiic-core.nvim
+# core.nvim
 
 Neovim utils
