@@ -4,7 +4,7 @@
 ---@return string[]
 local string_split = function(str, sep)
 	local res = {}
-	for s in string.gmatch(str, "[^" .. sep .. "]*") do
+	for s in string.gmatch(str, "[^" .. sep .. "]+") do
 		table.insert(res, s)
 	end
 	return res
