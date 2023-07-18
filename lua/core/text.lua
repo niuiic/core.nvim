@@ -73,8 +73,14 @@ local selected_area = function()
 	end
 end
 
+local cancel_selection = function()
+	local esc = vim.api.nvim_replace_termcodes("<esc>", true, false, true)
+	vim.api.nvim_feedkeys(esc, "x", false)
+end
+
 return {
 	insert = insert,
 	selection = selection,
 	selected_area = selected_area,
+	cancel_selection = cancel_selection,
 }
