@@ -3,11 +3,23 @@
 ---@param sep string
 ---@return string[]
 local string_split = function(str, sep)
-	local res = {}
-	for s in string.gmatch(str, "[^" .. sep .. "]+") do
-		table.insert(res, s)
+	local chunks = {}
+	local index = 1
+	local len = string.len(str)
+	while index <= len do
+		local head, tail = string.find(str, sep, index, true)
+		if not head or not tail then
+			table.insert(chunks, string.sub(str, index))
+			return chunks
+		end
+		if index == head then
+			table.insert(chunks, "")
+		else
+			table.insert(chunks, string.sub(str, index, head - 1))
+		end
+		index = tail + 1
 	end
-	return res
+	return chunks
 end
 
 --- map list
