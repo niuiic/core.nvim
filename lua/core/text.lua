@@ -49,10 +49,25 @@ local selected_area = function()
 	if vim.fn.mode() == "v" then
 		local start_pos = vim.fn.getpos("v")
 		local finish_pos = vim.fn.getpos(".")
-		return {
-			s_start = { row = start_pos[2], col = start_pos[3] },
-			s_end = { row = finish_pos[2], col = finish_pos[3] },
-		}
+		local s_start = { row = start_pos[2], col = start_pos[3] }
+		local s_end = { row = finish_pos[2], col = finish_pos[3] }
+
+		if s_start.row > s_end.row then
+			return {
+				s_start = s_end,
+				s_end = s_start,
+			}
+		elseif s_start.row == s_end.row and s_start.col > s_end.col then
+			return {
+				s_start = s_end,
+				s_end = s_start,
+			}
+		else
+			return {
+				s_start = s_start,
+				s_end = s_end,
+			}
+		end
 	else
 		return nil
 	end
