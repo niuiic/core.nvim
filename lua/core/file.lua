@@ -101,6 +101,46 @@ local dir = function(file_path)
 	return string.match(file_path, "(.+)/[^/]+")
 end
 
+--- watch file or directory
+---@param path string
+---@param on_err fun(err: string, filename: string)
+---@param on_event fun(filename: string, events: object)
+---@param flags { watch_entry: boolean, stat: boolean, recursive: boolean } | nil
+---@return {stop_watch: fun()} | nil
+local watch = function(path, on_event, on_err, flags)
+	local notify_err = function()
+		vim.notify("Watch " .. path .. " failed", vim.log.levels.ERROR)
+	end
+
+	local handle = uv.new_fs_event()
+	if not handle then
+		notify_err()
+		return
+	end
+
+	local stop_watch = function()
+		---@diagnostic disable-next-line: redundant-parameter
+		uv.fs_event_stop(handle)
+	end
+
+	uv.fs_event_start(handle, path, flags or {
+		watch_entry = false,
+		stat = false,
+		recursive = false,
+	}, function(err, filename, events)
+		if err then
+			on_err(err, filename)
+			stop_watch()
+		else
+			on_event(filename, events)
+		end
+	end)
+
+	return {
+		stop_watch = stop_watch,
+	}
+end
+
 return {
 	file_or_dir_exists = file_or_dir_exists,
 	root_path = root_path,
@@ -109,4 +149,5 @@ return {
 	name = name,
 	extension = extension,
 	dir = dir,
+	watch = watch,
 }
