@@ -92,7 +92,7 @@ end
 --- get file extention from file path
 ---@param file_path string
 local extension = function(file_path)
-	return string.match(file_path, "%.([^%.]+)$")
+	return string.match(file_path, "%.([^%.^/]+)$")
 end
 
 --- get dir path from file path
