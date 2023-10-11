@@ -141,6 +141,34 @@ local watch = function(path, on_event, on_err, flags)
 	}
 end
 
+local rmdir
+--- remove directory
+---@param path string
+rmdir = function(path)
+	local directory = uv.fs_opendir(path)
+	if not directory then
+		return
+	end
+
+	while true do
+		local files = uv.fs_readdir(directory)
+		if not files then
+			break
+		end
+
+		for _, file in ipairs(files) do
+			if file.type == "directory" then
+				rmdir(path .. "/" .. file.name)
+			else
+				uv.fs_unlink(path .. "/" .. file.name)
+			end
+		end
+	end
+
+	uv.fs_closedir(directory)
+	uv.fs_rmdir(path)
+end
+
 return {
 	file_or_dir_exists = file_or_dir_exists,
 	root_path = root_path,
@@ -150,4 +178,5 @@ return {
 	extension = extension,
 	dir = dir,
 	watch = watch,
+	rmdir = rmdir,
 }
