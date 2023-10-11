@@ -194,14 +194,14 @@ local table_keys = function(t)
 	return keys
 end
 
----@class Lua.Node
----@field children Lua.Node[] | nil
+---@class core.Lua.Node
+---@field children core.Lua.Node[] | nil
 
 --- table walk
 local tree_walk
----@param nodes Lua.Node[]
----@param cb fun(node: Lua.Node, parent_node: Lua.Node | nil)
----@param parent_node Lua.Node
+---@param nodes core.Lua.Node[]
+---@param cb fun(node: core.Lua.Node, parent_node: core.Lua.Node | nil)
+---@param parent_node core.Lua.Node
 tree_walk = function(nodes, cb, parent_node)
 	for _, node in ipairs(nodes) do
 		cb(node, parent_node)
