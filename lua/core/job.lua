@@ -7,7 +7,7 @@ local uv = vim.loop
 ---@param on_exit fun(code: integer, signal: integer) | nil
 ---@param on_err fun(err: string, data: string) | nil
 ---@param on_output fun(err: string, data: string) | nil
----@return {terminate: fun(), running: fun(): boolean} handle
+---@return {terminate: fun(), stdin: uv_pipe_t, running: fun(): boolean}
 local spawn = function(cmd, args, options, on_exit, on_err, on_output)
 	local stdin = uv.new_pipe()
 	local stderr = uv.new_pipe()
