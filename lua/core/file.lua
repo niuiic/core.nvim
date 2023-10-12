@@ -169,6 +169,23 @@ rmdir = function(path)
 	uv.fs_rmdir(path)
 end
 
+--- is an empty directory (return true if the directory does not exist)
+---@param path string
+---@return boolean
+local empty_dir = function(path)
+	local directory = uv.fs_opendir(path)
+	if not directory then
+		return true
+	end
+
+	local files = uv.fs_readdir(directory)
+	if files and #files > 0 then
+		return false
+	end
+
+	return true
+end
+
 return {
 	file_or_dir_exists = file_or_dir_exists,
 	root_path = root_path,
@@ -179,4 +196,5 @@ return {
 	dir = dir,
 	watch = watch,
 	rmdir = rmdir,
+	empty_dir = empty_dir,
 }
