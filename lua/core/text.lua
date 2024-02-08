@@ -21,7 +21,7 @@ end
 --- get virtual selection or expr under the cursor
 ---@return string
 local selection = function()
-	if vim.fn.mode() == "v" then
+	if vim.fn.mode() == "v" or vim.fn.mode() == "V" then
 		local start_pos = vim.fn.getpos("v")
 		local finish_pos = vim.fn.getpos(".")
 		local start_line, start_col = start_pos[2], start_pos[3]
